@@ -1,0 +1,40 @@
+{
+  "name": "bonjour",
+  "version": "0.0.0",
+  "description": "A Bonjour/Zeroconf protocol implementation in JavaScript",
+  "main": "index.js",
+  "dependencies": {
+    "mdns-txt": "^1.0.0",
+    "multicast-dns": "^4.0.0",
+    "multicast-dns-service-types": "^1.1.0"
+  },
+  "devDependencies": {
+    "standard": "^5.3.1"
+  },
+  "scripts": {
+    "test": "standard"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/watson/bonjour.git"
+  },
+  "keywords": [
+    "bonjour",
+    "zeroconf",
+    "zero",
+    "configuration",
+    "mdns",
+    "dns",
+    "service",
+    "discovery",
+    "multicast",
+    "broadcast",
+    "dns-sd"
+  ],
+  "author": "Thomas Watson Steen <w@tson.dk> (https://twitter.com/wa7son)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/watson/bonjour/issues"
+  },
+  "homepage": "https://github.com/watson/bonjour"
+}
