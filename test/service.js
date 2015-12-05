@@ -8,22 +8,22 @@ var hostname = os.hostname()
 var host = hostname.replace(/\.local\.?$/, '')
 
 test('no type', function (t) {
-  t.throws(function (err) {
-    new Service({ protocol: 'tcp', port: 3000 })
+  t.throws(function () {
+    new Service({ protocol: 'tcp', port: 3000 }) // eslint-disable-line no-new
   }, 'Required type not given')
   t.end()
 })
 
 test('no port', function (t) {
-  t.throws(function (err) {
-    new Service({ type: 'http', protocol: 'tcp' })
+  t.throws(function () {
+    new Service({ type: 'http', protocol: 'tcp' }) // eslint-disable-line no-new
   }, 'Required port not given')
   t.end()
 })
 
 test('no port', function (t) {
-  t.throws(function (err) {
-    new Service({ type: 'http', port: 3000 })
+  t.throws(function () {
+    new Service({ type: 'http', port: 3000 }) // eslint-disable-line no-new
   }, 'Required protocol not given')
   t.end()
 })
