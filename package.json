@@ -1,6 +1,6 @@
 {
   "name": "zeroconf",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A Bonjour/Zeroconf protocol implementation in JavaScript",
   "main": "index.js",
   "dependencies": {
@@ -39,7 +39,7 @@
   },
   "homepage": "https://github.com/watson/zeroconf",
   "coordinates": [
-    30.554766,
-    -81.4444202
+    30.5547425,
+    -81.4443637
   ]
 }
