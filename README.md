@@ -21,13 +21,13 @@ npm install watson/bonjour
 Advertising new services:
 
 ```js
-var bonjour = require('bonjour')
+var bonjour = require('bonjour')()
 
-// advertise an IPP printer on port 3000
-bonjour.tcp.publish('ipp', 3000)
+// advertise an HTTP server on port 3000
+bonjour.tcp.publish('http', 3000)
 
 // or give it a custom name and configuration details
-bonjour.tcp.publish({ type: 'ipp', port: 3000, name: 'My Funky Printer', txt: {...} })
+bonjour.publish({ type: 'http', protocol: 'tcp', port: 3000, name: 'Foobar', txt: {...} })
 ```
 
 ## License
