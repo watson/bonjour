@@ -9,11 +9,8 @@ A Bonjour/Zeroconf protocol implementation in JavaScript.
 
 ## Installation
 
-This project is still not on npm, but for now you can install it
-directly from GitHub via:
-
 ```
-npm install watson/zeroconf
+npm install zeroconf
 ```
 
 ## Usage
