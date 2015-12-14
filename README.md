@@ -21,6 +21,7 @@ Advertising new services:
 var bonjour = require('bonjour')()
 
 // advertise an HTTP server on port 3000
+bonjour.tcp.publish('http', 3000)
 
 // or give it a custom name and configuration details
 bonjour.publish({ type: 'http', protocol: 'tcp', port: 3000, name: 'Foobar', txt: {...} })
