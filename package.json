@@ -1,5 +1,5 @@
 {
-  "name": "zeroconf",
+  "name": "bonjour",
   "version": "0.1.3",
   "description": "A Bonjour/Zeroconf protocol implementation in JavaScript",
   "main": "index.js",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/watson/zeroconf.git"
+    "url": "https://github.com/watson/bonjour.git"
   },
   "keywords": [
     "bonjour",
@@ -35,9 +35,9 @@
   "author": "Thomas Watson Steen <w@tson.dk> (https://twitter.com/wa7son)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/watson/zeroconf/issues"
+    "url": "https://github.com/watson/bonjour/issues"
   },
-  "homepage": "https://github.com/watson/zeroconf",
+  "homepage": "https://github.com/watson/bonjour",
   "coordinates": [
     30.5547744,
     -81.444386
