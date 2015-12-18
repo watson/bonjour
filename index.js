@@ -1,25 +1,34 @@
 'use strict'
 
-var registry = require('./lib/registry')
+var Registry = require('./lib/registry')
 var Server = require('./lib/mdns-server')
+var Browser = require('./lib/browser')
 
-module.exports = function (opts) {
-  var server = new Server(opts)
+module.exports = Bonjour
 
-  return {
-    publish: registry.publish.bind(null, server),
-    unpublishAll: registry.unpublishAll.bind(null, server),
-    tcp: {
-      publish: publish.bind(null, 'tcp')
-    },
-    udp: {
-      publish: publish.bind(null, 'udp')
-    }
-  }
+function Bonjour (opts) {
+  if (!(this instanceof Bonjour)) return new Bonjour(opts)
+  this._server = new Server(opts)
+  this._registry = new Registry(this._server)
+}
 
-  function publish (protocol, opts) {
-    if (typeof opts === 'string') return publish(protocol, { type: opts, port: arguments[2] })
-    opts.protocol = protocol
-    return registry.publish(server, opts)
-  }
+Bonjour.prototype.publish = function (opts) {
+  return this._registry.publish(opts)
+}
+
+Bonjour.prototype.unpublishAll = function (cb) {
+  this._registry.unpublishAll(cb)
+}
+
+Bonjour.prototype.find = function (opts, onup) {
+  return new Browser(this._server.mdns, opts, onup)
+}
+
+Bonjour.prototype.findOne = function (opts, cb) {
+  var browser = new Browser(this._server.mdns, opts)
+  browser.once('up', function (service) {
+    browser.stop()
+    if (cb) cb(service)
+  })
+  return browser
 }
