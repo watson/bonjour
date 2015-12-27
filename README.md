@@ -85,6 +85,10 @@ Options are:
 Unpublish all services. The optional `callback` will be called when the
 services have been unpublished.
 
+#### `bonjour.destroy()`
+
+Destroy the mdns instance. Closes the udp socket.
+
 ### Browser
 
 #### `var browser = bonjour.find(options[, onup])`

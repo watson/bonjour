@@ -32,3 +32,8 @@ Bonjour.prototype.findOne = function (opts, cb) {
   })
   return browser
 }
+
+Bonjour.prototype.destroy = function () {
+  this._registry.destroy()
+  this._server.mdns.destroy()
+}
