@@ -188,12 +188,8 @@ A boolean indicating if the service is currently published.
 
 ## Todo
 
-- Restrict a browser or an adverticement to a specific network
-  interface, ip address, ip version(?) or interface index
-- Support sending "goodbye" packets when shutting down
 - Support receiving "goodbye" packets in the browser
 - Support notifying the browser when a service changes
-- Support storing received mDNS records in a cache
 - Support TTL in the cache (in case of TTL=0, it should be handled as a
   goodbye packet nad the TTL should be set to 1 second)
 
