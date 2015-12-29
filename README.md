@@ -53,7 +53,7 @@ Options are:
 
 Allow the user to publish a new service on the network.
 
-A service have the following properties:
+A service has the following properties:
 
 - name: `'Apple TV'`
 - type: `'airplay'`
