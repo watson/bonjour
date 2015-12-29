@@ -88,6 +88,25 @@ test('bonjour.find', function (bonjour, t) {
   bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
 })
 
+test('bonjour.find - down event', function (bonjour, t) {
+  var service = bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 })
+
+  service.on('up', function () {
+    var browser = bonjour.find({ type: 'test' })
+
+    browser.on('up', function (s) {
+      t.equal(s.name, 'Foo Bar')
+      service.stop()
+    })
+
+    browser.on('down', function (s) {
+      t.equal(s.name, 'Foo Bar')
+      bonjour.destroy()
+      t.end()
+    })
+  })
+})
+
 test('bonjour.findOne - callback', function (bonjour, t) {
   var next = afterAll(function () {
     bonjour.findOne({ type: 'test' }, function (s) {
