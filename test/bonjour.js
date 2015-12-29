@@ -62,7 +62,7 @@ test('bonjour.find', function (bonjour, t) {
       } else {
         t.equal(s.name, 'Baz')
         t.equal(s.fqdn, 'Baz._test._tcp.local')
-        t.deepEqual(s.txt, { foo: new Buffer('bar') })
+        t.deepEqual(s.txt, { foo: 'bar' })
         t.deepEqual(s.rawTxt, new Buffer('07666f6f3d626172', 'hex'))
       }
       t.equal(s.host, os.hostname())
