@@ -190,13 +190,6 @@ this property might be `null`.
 
 A boolean indicating if the service is currently published.
 
-## Todo
-
-- Support receiving "goodbye" packets in the browser
-- Support notifying the browser when a service changes
-- Support TTL in the cache (in case of TTL=0, it should be handled as a
-  goodbye packet nad the TTL should be set to 1 second)
-
 ## License
 
 MIT
