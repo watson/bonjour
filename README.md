@@ -38,16 +38,9 @@ bonjour.find({ type: 'http' }, function (service) {
 var bonjour = require('bonjour')([options])
 ```
 
-Options are:
-
-- `multicast` - use udp multicasting
-- `interface` - explicitly specify a network interface. defaults to all
-- `port` - set the udp port
-- `ip` - set the udp ip
-- `ttl` - set the multicast ttl
-- `loopback` - receive your own packets
-- `reuseAddr` - set the reuseAddr option when creating the socket
-  (requires node >=0.11.13)
+The `options` are optional and will be used when initializing the
+underlying multicast-dns server. For details see [the multicast-dns
+documentation](https://github.com/mafintosh/multicast-dns#mdns--multicastdnsoptions).
 
 ### Publishing
 
