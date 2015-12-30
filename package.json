@@ -1,7 +1,7 @@
 {
   "name": "bonjour",
   "version": "3.0.0",
-  "description": "A Bonjour/Zeroconf protocol implementation in JavaScript",
+  "description": "A Bonjour/Zeroconf implementation in pure JavaScript",
   "main": "index.js",
   "dependencies": {
     "mdns-txt": "^2.0.0",
