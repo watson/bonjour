@@ -46,16 +46,6 @@ documentation](https://github.com/mafintosh/multicast-dns#mdns--multicastdnsopti
 
 Allow the user to publish a new service on the network.
 
-A service has the following properties:
-
-- name: `'Apple TV'`
-- type: `'airplay'`
-- protocol: `'tcp'`
-- host: `'hostname.local'`
-- port: `5000`
-- txt: `{...}` (optional)
-- subtypes: `['api-v1']` (optional)
-
 #### `var service = bonjour.publish(options)`
 
 Publishes a new service.
@@ -67,7 +57,7 @@ Options are:
 - `port` (number)
 - `type` (string)
 - `subtypes` (array of strings, optional)
-- `protocol` (string, optional) - defaults to `tcp`
+- `protocol` (string, optional) - `udp` or `tcp` (default)
 - `txt` (object, optional) - a key/value object to broadcast as the TXT
   record
 
@@ -176,6 +166,10 @@ property will be `Foo Bar._http._tcp.local`.
 
 The TXT record advertised by the service (a key/value object). Note that
 this property might be `null`.
+
+#### `service.rawTxt`
+
+The original raw Buffer of the txt record.
 
 #### `service.published`
 
