@@ -162,10 +162,6 @@ property will be `Foo Bar._http._tcp.local`.
 The TXT record advertised by the service (a key/value object). Note that
 this property might be `null`.
 
-#### `service.rawTxt`
-
-The original raw Buffer of the txt record.
-
 #### `service.published`
 
 A boolean indicating if the service is currently published.
