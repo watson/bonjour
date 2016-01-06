@@ -29,12 +29,12 @@ test('minimal', function (t) {
   var s = new Service({ name: 'Foo Bar', type: 'http', port: 3000 })
   t.equal(s.name, 'Foo Bar')
   t.equal(s.protocol, 'tcp')
-  t.equal(s.type, '_http._tcp')
-  t.equal(s.host, os.hostname())
+  t.equal(s.type, 'http')
+  t.equal(s.host, os.hostname().split('.')[0])
   t.equal(s.port, 3000)
   t.equal(s.fqdn, 'Foo Bar._http._tcp.local')
   t.equal(s.txt, null)
-  t.equal(s.subtypes, null)
+  t.deepEqual(s.subtypes, [])
   t.equal(s.published, false)
   t.end()
 })
@@ -47,7 +47,8 @@ test('protocol', function (t) {
 
 test('host', function (t) {
   var s = new Service({ name: 'Foo Bar', type: 'http', port: 3000, host: 'example.com' })
-  t.deepEqual(s.host, 'example.com')
+  t.deepEqual(s.host, 'example')
+  t.deepEqual(s.parentDomain, 'com')
   t.end()
 })
 
@@ -59,20 +60,18 @@ test('txt', function (t) {
 
 test('_records() - minimal', function (t) {
   var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000 })
-  t.deepEqual(s._records(), [
-    { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' },
-    { data: { port: 3000, target: os.hostname() }, name: s.fqdn, ttl: 120, type: 'SRV' },
-    { data: new Buffer('00', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' }
-  ])
+  var r = s._records()
+  t.deepEqual(r[0], { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' })
+  t.deepEqual(r[1], { data: { port: 3000, target: os.hostname() }, name: s.fqdn, ttl: 120, type: 'SRV' })
+  t.deepEqual(r[2], { data: new Buffer('00', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' })
   t.end()
 })
 
 test('_records() - everything', function (t) {
-  var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000, host: 'example.com', txt: { foo: 'bar' } })
-  t.deepEqual(s._records(), [
-    { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' },
-    { data: { port: 3000, target: 'example.com' }, name: s.fqdn, ttl: 120, type: 'SRV' },
-    { data: new Buffer('07666f6f3d626172', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' }
-  ])
+  var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000, host: 'example.com', txt: { foo: 'bar' }, subtypes: ['foo', 'bar'] })
+  var r = s._records()
+  t.deepEqual(r[0], { data: s.fqdn, name: 'foo.bar._sub._http._tcp.local', ttl: 28800, type: 'PTR' })
+  t.deepEqual(r[1], { data: { port: 3000, target: 'example.com' }, name: s.fqdn, ttl: 120, type: 'SRV' })
+  t.deepEqual(r[2], { data: new Buffer('07666f6f3d626172', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' })
   t.end()
 })
