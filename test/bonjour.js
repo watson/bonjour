@@ -78,7 +78,7 @@ test('bonjour.find', function (bonjour, t) {
         setTimeout(function () {
           bonjour.destroy()
           t.end()
-        }, 50)
+        }, 1000)
       }
     })
   })
@@ -132,4 +132,50 @@ test('bonjour.findOne - emitter', function (bonjour, t) {
 
   bonjour.publish({ name: 'Emitter', type: 'test', port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
+})
+
+test('bonjour.findOne - subtype', function (bonjour, t) {
+  var next = afterAll(function () {
+    var browser = bonjour.find({ type: 'bar', subtypes: ['sub1'] })
+    browser.on('up', function (s) {
+      t.equal(s.name, 'Foo')
+      t.equal(s.port, 3000)
+      // use timeout in an attempt to make sure the invalid record doesn't
+      // bubble up
+      setTimeout(function () {
+        bonjour.destroy()
+        t.end()
+      }, 2000)
+    })
+  })
+
+  bonjour.publish({ name: 'Foo', type: 'bar', port: 3000, subtypes: ['sub1'] }).on('up', next())
+  bonjour.publish({ name: 'Invalid', type: 'bar', port: 3001, subtypes: ['sub2'] }).on('up', next())
+})
+
+test('bonjour.find - all of subtype', function (bonjour, t) {
+  var next = afterAll(function () {
+    var browser = bonjour.find({ type: 'baz' })
+    var ups = 0
+
+    browser.on('up', function (s) {
+      if (s.name === 'Foo') {
+        t.equal(s.name, 'Foo')
+        t.equal(s.fqdn, 'Foo._baz._tcp.local')
+        t.equal(s.port, 3000)
+      } else if (s.name === 'Bar') {
+        t.equal(s.name, 'Bar')
+        t.equal(s.fqdn, 'Bar._baz._tcp.local')
+        t.equal(s.port, 3001)
+      }
+
+      if (++ups === 2) {
+        bonjour.destroy()
+        t.end()
+      }
+    })
+  })
+
+  bonjour.publish({ name: 'Foo', type: 'baz', port: 3000, subtypes: ['sub1'] }).on('up', next())
+  bonjour.publish({ name: 'Bar', type: 'baz', port: 3001, subtypes: ['sub2'] }).on('up', next())
 })
