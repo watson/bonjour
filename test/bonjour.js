@@ -62,7 +62,7 @@ test('bonjour.find', function (bonjour, t) {
       } else {
         t.equal(s.name, 'Baz')
         t.equal(s.fqdn, 'Baz._test._tcp.local')
-        t.deepEqual(s.txt, { foo: new Buffer('bar') })
+        t.deepEqual(s.txt, { foo: 'bar' })
         t.deepEqual(s.rawTxt, new Buffer('07666f6f3d626172', 'hex'))
       }
       t.equal(s.host, os.hostname())
@@ -86,6 +86,25 @@ test('bonjour.find', function (bonjour, t) {
   bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
+})
+
+test('bonjour.find - down event', function (bonjour, t) {
+  var service = bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 })
+
+  service.on('up', function () {
+    var browser = bonjour.find({ type: 'test' })
+
+    browser.on('up', function (s) {
+      t.equal(s.name, 'Foo Bar')
+      service.stop()
+    })
+
+    browser.on('down', function (s) {
+      t.equal(s.name, 'Foo Bar')
+      bonjour.destroy()
+      t.end()
+    })
+  })
 })
 
 test('bonjour.findOne - callback', function (bonjour, t) {

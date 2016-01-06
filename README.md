@@ -1,8 +1,8 @@
 # bonjour
 
-A Bonjour/Zeroconf protocol implementation in JavaScript.
-
-**This project is still work-in-progress**
+A Bonjour/Zeroconf protocol implementation in pure JavaScript. Publish
+services on the local network or discover existing services using
+multicast DNS.
 
 [![Build status](https://travis-ci.org/watson/bonjour.svg?branch=master)](https://travis-ci.org/watson/bonjour)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
@@ -15,18 +15,13 @@ npm install bonjour
 
 ## Usage
 
-Advertise a new service:
-
 ```js
 var bonjour = require('bonjour')()
 
 // advertise an HTTP server on port 3000
 bonjour.publish({ name: 'My Web Server', type: 'http', port: 3000 })
-```
 
-Discover services:
-
-```js
+// browse for all http services
 bonjour.find({ type: 'http' }, function (service) {
   console.log('Found an HTTP server:', service)
 })
@@ -40,30 +35,11 @@ bonjour.find({ type: 'http' }, function (service) {
 var bonjour = require('bonjour')([options])
 ```
 
-Options are:
-
-- `multicast` - use udp multicasting
-- `interface` - explicitly specify a network interface. defaults to all
-- `port` - set the udp port
-- `ip` - set the udp ip
-- `ttl` - set the multicast ttl
-- `loopback` - receive your own packets
-- `reuseAddr` - set the reuseAddr option when creating the socket
-  (requires node >=0.11.13)
+The `options` are optional and will be used when initializing the
+underlying multicast-dns server. For details see [the multicast-dns
+documentation](https://github.com/mafintosh/multicast-dns#mdns--multicastdnsoptions).
 
 ### Publishing
-
-Allow the user to publish a new service on the network.
-
-A service have the following properties:
-
-- name: `'Apple TV'`
-- type: `'airplay'`
-- protocol: `'tcp'`
-- host: `'hostname.local'`
-- port: `5000`
-- txt: `{...}` (optional)
-- subtypes: `['api-v1']` (optional)
 
 #### `var service = bonjour.publish(options)`
 
@@ -76,7 +52,7 @@ Options are:
 - `port` (number)
 - `type` (string)
 - `subtypes` (array of strings, optional)
-- `protocol` (string, optional) - defaults to `tcp`
+- `protocol` (string, optional) - `udp` or `tcp` (default)
 - `txt` (object, optional) - a key/value object to broadcast as the TXT
   record
 
@@ -189,13 +165,6 @@ this property might be `null`.
 #### `service.published`
 
 A boolean indicating if the service is currently published.
-
-## Todo
-
-- Support receiving "goodbye" packets in the browser
-- Support notifying the browser when a service changes
-- Support TTL in the cache (in case of TTL=0, it should be handled as a
-  goodbye packet nad the TTL should be set to 1 second)
 
 ## License
 
