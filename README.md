@@ -73,11 +73,11 @@ Listen for services advertised on the network. An optional callback can
 be provided as the 2nd argument and will be added as an event listener
 for the `up` event.
 
-Options are:
+Options (all optional):
 
 - `type` (string)
-- `subtypes` (array of strings, optional)
-- `protocol` (string, optional) - defaults to `tcp`
+- `subtypes` (array of strings)
+- `protocol` (string) - defaults to `tcp`
 
 #### `var browser = bonjour.findOne(options[, callback])`
 
