@@ -38,11 +38,21 @@ test('bonjour.publish', function (bonjour, t) {
 })
 
 test('bonjour.unpublishAll', function (bonjour, t) {
-  var service = bonjour.publish({ name: 'foo', type: 'bar', port: 3000 })
-  service.on('up', function () {
-    bonjour.unpublishAll(function () {
-      t.equal(service.published, false)
-      bonjour.destroy()
+  t.test('published services', function (t) {
+    var service = bonjour.publish({ name: 'foo', type: 'bar', port: 3000 })
+    service.on('up', function () {
+      bonjour.unpublishAll(function (err) {
+        t.error(err)
+        t.equal(service.published, false)
+        bonjour.destroy()
+        t.end()
+      })
+    })
+  })
+
+  t.test('no published services', function (t) {
+    bonjour.unpublishAll(function (err) {
+      t.error(err)
       t.end()
     })
   })
