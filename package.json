@@ -6,7 +6,7 @@
   "dependencies": {
     "array-flatten": "^2.0.0",
     "dns-equal": "^1.0.0",
-    "mdns-txt": "^2.0.0",
+    "dns-txt": "^2.0.1",
     "multicast-dns": "^5.0.0",
     "multicast-dns-service-types": "^1.1.0"
   },
