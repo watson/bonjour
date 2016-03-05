@@ -50,7 +50,7 @@ Options are:
 - `name` (string)
 - `host` (string, optional) - defaults to local hostname
 - `port` (number)
-- `type` (string)
+- `type` (string) One defined by [IANA](http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml)
 - `subtypes` (array of strings, optional)
 - `protocol` (string, optional) - `udp` or `tcp` (default)
 - `txt` (object, optional) - a key/value object to broadcast as the TXT
