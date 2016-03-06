@@ -50,7 +50,7 @@ Options are:
 - `name` (string)
 - `host` (string, optional) - defaults to local hostname
 - `port` (number)
-- `type` (string) One defined by [IANA](http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml)
+- `type` (string)
 - `subtypes` (array of strings, optional)
 - `protocol` (string, optional) - `udp` or `tcp` (default)
 - `txt` (object, optional) - a key/value object to broadcast as the TXT
@@ -165,6 +165,12 @@ this property might be `null`.
 #### `service.published`
 
 A boolean indicating if the service is currently published.
+
+## Notes
+
+Beware your announce packets relies on good whilling of the router within your network.
+Some may actively refuse to announce non standard service types.
+[List of service types edited by IANA](http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml)
 
 ## License
 
