@@ -56,6 +56,9 @@ Options are:
 - `txt` (object, optional) - a key/value object to broadcast as the TXT
   record
 
+IANA maintains a [list of official service types and port
+numbers](http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml).
+
 #### `bonjour.unpublishAll([callback])`
 
 Unpublish all services. The optional `callback` will be called when the
@@ -165,12 +168,6 @@ this property might be `null`.
 #### `service.published`
 
 A boolean indicating if the service is currently published.
-
-## Notes
-
-Beware your announce packets relies on good whilling of the router within your network.
-Some may actively refuse to announce non standard service types.
-[List of service types edited by IANA](http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml)
 
 ## License
 
