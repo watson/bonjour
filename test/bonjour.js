@@ -98,6 +98,22 @@ test('bonjour.find', function (bonjour, t) {
   bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
 })
 
+test('bonjour.find - binary txt', function (bonjour, t) {
+  var next = afterAll(function () {
+    var browser = bonjour.find({ type: 'test', txt: { binary: true } })
+
+    browser.on('up', function (s) {
+      t.equal(s.name, 'Foo')
+      t.deepEqual(s.txt, { bar: new Buffer('buz') })
+      t.deepEqual(s.rawTxt, new Buffer('076261723d62757a', 'hex'))
+      bonjour.destroy()
+      t.end()
+    })
+  })
+
+  bonjour.publish({ name: 'Foo', type: 'test', port: 3000, txt: { bar: new Buffer('buz') } }).on('up', next())
+})
+
 test('bonjour.find - down event', function (bonjour, t) {
   var service = bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 })
 
