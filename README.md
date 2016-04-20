@@ -103,13 +103,13 @@ Emitted every time an existing service emmits a goodbye message.
 
 An array of services known by the browser to be online.
 
-#### `browser.stop()`
-
-Stop looking for matching services.
-
 #### `browser.start()`
 
 Start looking for matching services.
+
+#### `browser.stop()`
+
+Stop looking for matching services.
 
 ### Service
 
