@@ -111,6 +111,10 @@ Start looking for matching services.
 
 Stop looking for matching services.
 
+#### `browser.update()`
+
+Broadcast the query again.
+
 ### Service
 
 #### `Event: up`
