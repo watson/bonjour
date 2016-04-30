@@ -12,8 +12,8 @@
   },
   "devDependencies": {
     "after-all": "^2.0.2",
-    "standard": "^5.4.1",
-    "tape": "^4.4.0"
+    "standard": "^6.0.8",
+    "tape": "^4.5.1"
   },
   "scripts": {
     "test": "standard && tape test/*.js"
