@@ -94,7 +94,7 @@ test('bonjour.find', function (bonjour, t) {
       t.equal(s.type, 'test')
       t.equal(s.protocol, 'tcp')
       t.deepEqual(s.subtypes, [])
-      t.deepEqual(s.addresses, getAddresses())
+      t.deepEqual(s.addresses.sort(), getAddresses().sort())
 
       if (++ups === 2) {
         // use timeout in an attempt to make sure the invalid record doesn't
