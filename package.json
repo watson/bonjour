@@ -1,6 +1,6 @@
 {
   "name": "bonjour",
-  "version": "3.3.1",
+  "version": "3.4.0",
   "description": "A Bonjour/Zeroconf implementation in pure JavaScript",
   "main": "index.js",
   "dependencies": {
@@ -43,7 +43,7 @@
   },
   "homepage": "https://github.com/watson/bonjour",
   "coordinates": [
-    52.5308832,
-    13.3838183
+    55.6877288,
+    12.5955495
   ]
 }
