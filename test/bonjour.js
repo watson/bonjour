@@ -7,7 +7,7 @@ var afterAll = require('after-all')
 var Service = require('../lib/service')
 var Bonjour = require('../')
 
-var get_addresses = function () {
+var getAddresses = function () {
   var addresses = []
   var itrs = os.networkInterfaces()
   for (var i in itrs) {
@@ -94,14 +94,13 @@ test('bonjour.find', function (bonjour, t) {
       t.equal(s.type, 'test')
       t.equal(s.protocol, 'tcp')
       t.deepEqual(s.subtypes, [])
-      t.deepEqual(s.addresses, get_addresses())
+      t.deepEqual(s.addresses.sort(), getAddresses().sort())
 
       if (++ups === 2) {
         // use timeout in an attempt to make sure the invalid record doesn't
         // bubble up
         setTimeout(function () {
           bonjour.destroy()
-          browser.stop()
           t.end()
         }, 50)
       }
@@ -111,6 +110,22 @@ test('bonjour.find', function (bonjour, t) {
   bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
+})
+
+test('bonjour.find - binary txt', function (bonjour, t) {
+  var next = afterAll(function () {
+    var browser = bonjour.find({ type: 'test', txt: { binary: true } })
+
+    browser.on('up', function (s) {
+      t.equal(s.name, 'Foo')
+      t.deepEqual(s.txt, { bar: new Buffer('buz') })
+      t.deepEqual(s.rawTxt, new Buffer('076261723d62757a', 'hex'))
+      bonjour.destroy()
+      t.end()
+    })
+  })
+
+  bonjour.publish({ name: 'Foo', type: 'test', port: 3000, txt: { bar: new Buffer('buz') } }).on('up', next())
 })
 
 test('bonjour.find - down event', function (bonjour, t) {
@@ -126,7 +141,6 @@ test('bonjour.find - down event', function (bonjour, t) {
 
     browser.on('down', function (s) {
       t.equal(s.name, 'Foo Bar')
-      browser.stop()
       bonjour.destroy()
       t.end()
     })
@@ -151,7 +165,6 @@ test('bonjour.findOne - emitter', function (bonjour, t) {
     var browser = bonjour.findOne({ type: 'test' })
     browser.on('up', function (s) {
       t.equal(s.name, 'Emitter')
-      browser.stop()
       bonjour.destroy()
       t.end()
     })
