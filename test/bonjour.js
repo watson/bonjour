@@ -7,7 +7,7 @@ var afterAll = require('after-all')
 var Service = require('../lib/service')
 var Bonjour = require('../')
 
-var get_addresses = function () {
+var getAddresses = function () {
   var addresses = []
   var itrs = os.networkInterfaces()
   for (var i in itrs) {
@@ -94,14 +94,13 @@ test('bonjour.find', function (bonjour, t) {
       t.equal(s.type, 'test')
       t.equal(s.protocol, 'tcp')
       t.deepEqual(s.subtypes, [])
-      t.deepEqual(s.addresses, get_addresses())
+      t.deepEqual(s.addresses, getAddresses())
 
       if (++ups === 2) {
         // use timeout in an attempt to make sure the invalid record doesn't
         // bubble up
         setTimeout(function () {
           bonjour.destroy()
-          browser.stop()
           t.end()
         }, 50)
       }
@@ -126,7 +125,6 @@ test('bonjour.find - down event', function (bonjour, t) {
 
     browser.on('down', function (s) {
       t.equal(s.name, 'Foo Bar')
-      browser.stop()
       bonjour.destroy()
       t.end()
     })
@@ -151,7 +149,6 @@ test('bonjour.findOne - emitter', function (bonjour, t) {
     var browser = bonjour.findOne({ type: 'test' })
     browser.on('up', function (s) {
       t.equal(s.name, 'Emitter')
-      browser.stop()
       bonjour.destroy()
       t.end()
     })
