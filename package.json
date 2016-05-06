@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "array-flatten": "^2.1.0",
+    "deep-equal": "^1.0.1",
     "dns-equal": "^1.0.0",
     "dns-txt": "^2.0.2",
     "multicast-dns": "^6.0.1",
