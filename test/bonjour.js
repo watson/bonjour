@@ -7,6 +7,20 @@ var afterAll = require('after-all')
 var Service = require('../lib/service')
 var Bonjour = require('../')
 
+var get_addresses = function () {
+  var addresses = []
+  var itrs = os.networkInterfaces()
+  for (var i in itrs) {
+    var addrs = itrs[i]
+    for (var j in addrs) {
+      if (addrs[j].internal === false) {
+        addresses.push(addrs[j].address)
+      }
+    }
+  }
+  return addresses
+}
+
 var port = function (cb) {
   var s = dgram.createSocket('udp4')
   s.bind(0, function () {
@@ -80,13 +94,14 @@ test('bonjour.find', function (bonjour, t) {
       t.equal(s.type, 'test')
       t.equal(s.protocol, 'tcp')
       t.deepEqual(s.subtypes, [])
-      t.deepEqual(s.addresses, [])
+      t.deepEqual(s.addresses, get_addresses())
 
       if (++ups === 2) {
         // use timeout in an attempt to make sure the invalid record doesn't
         // bubble up
         setTimeout(function () {
           bonjour.destroy()
+          browser.stop()
           t.end()
         }, 50)
       }
@@ -111,6 +126,7 @@ test('bonjour.find - down event', function (bonjour, t) {
 
     browser.on('down', function (s) {
       t.equal(s.name, 'Foo Bar')
+      browser.stop()
       bonjour.destroy()
       t.end()
     })
@@ -135,6 +151,7 @@ test('bonjour.findOne - emitter', function (bonjour, t) {
     var browser = bonjour.findOne({ type: 'test' })
     browser.on('up', function (s) {
       t.equal(s.name, 'Emitter')
+      browser.stop()
       bonjour.destroy()
       t.end()
     })
