@@ -93,6 +93,10 @@ test('bonjour.find', function (bonjour, t) {
       t.equal(s.port, 3000)
       t.equal(s.type, 'test')
       t.equal(s.protocol, 'tcp')
+      t.equal(s.referer.address, '127.0.0.1')
+      t.equal(s.referer.family, 'IPv4')
+      t.ok(Number.isFinite(s.referer.port))
+      t.ok(Number.isFinite(s.referer.size))
       t.deepEqual(s.subtypes, [])
       t.deepEqual(s.addresses.sort(), getAddresses().sort())
 
