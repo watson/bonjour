@@ -5,17 +5,17 @@ var test = require('tape')
 var Service = require('../lib/service')
 
 var getAddressesRecords = function (host) {
-  var addresses_records = []
+  var records = []
   var itrs = os.networkInterfaces()
   for (var i in itrs) {
     var addrs = itrs[i]
     for (var j in addrs) {
       if (addrs[j].internal === false) {
-        addresses_records.push({ data: addrs[j].address, name: host, ttl: 120, type: addrs[j].family === 'IPv4' ? 'A' : 'AAAA' })
+        records.push({ data: addrs[j].address, name: host, ttl: 120, type: addrs[j].family === 'IPv4' ? 'A' : 'AAAA' })
       }
     }
   }
-  return addresses_records
+  return records
 }
 
 test('no name', function (t) {
