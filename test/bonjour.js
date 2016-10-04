@@ -75,9 +75,13 @@ test('bonjour.unpublishAll', function (bonjour, t) {
 test('bonjour.find', function (bonjour, t) {
   var next = afterAll(function () {
     var browser = bonjour.find({ type: 'test' })
+    var browserSubtypes = bonjour.find({ type: 'test', subtypes: [ 'stOne', 'stTwo' ] })
     var ups = 0
+    var subUp = 0
 
     browser.on('up', function (s) {
+      if (s.name === 'Sub Foo') return
+
       if (s.name === 'Foo Bar') {
         t.equal(s.name, 'Foo Bar')
         t.equal(s.fqdn, 'Foo Bar._test._tcp.local')
@@ -109,10 +113,37 @@ test('bonjour.find', function (bonjour, t) {
         }, 50)
       }
     })
+
+    browserSubtypes.on('up', function (s) {
+      t.equal(s.name, 'Sub Foo')
+      t.equal(s.fqdn, 'Sub Foo._test._tcp.local')
+      t.deepEqual(s.txt, {})
+      t.deepEqual(s.rawTxt, new Buffer('00', 'hex'))
+      t.equal(s.host, os.hostname())
+      t.equal(s.port, 3000)
+      t.equal(s.type, 'test')
+      t.equal(s.protocol, 'tcp')
+      t.equal(s.referer.address, '127.0.0.1')
+      t.equal(s.referer.family, 'IPv4')
+      t.ok(Number.isFinite(s.referer.port))
+      t.ok(Number.isFinite(s.referer.size))
+      if (++subUp === 2) {
+        // Subtypes may be out of order depending on order records were
+        // received in.
+        var testCount = 0
+        s.subtypes.forEach(function (subtype) {
+          if ((subtype === 'stTwo') || (subtype === 'stOne')) {
+            testCount += 1
+          }
+        })
+        t.equal(testCount, 2)
+      }
+    })
   })
 
   bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Sub Foo', type: 'test', subtypes: [ 'stOne', 'stTwo' ], port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
 })
 
