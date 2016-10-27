@@ -75,9 +75,7 @@ test('bonjour.unpublishAll', function (bonjour, t) {
 test('bonjour.find', function (bonjour, t) {
   var next = afterAll(function () {
     var browser = bonjour.find({ type: 'test' })
-    var browserSubtypes = bonjour.find({ type: 'test', subtypes: [ 'stOne', 'stTwo' ] })
     var ups = 0
-    var subUp = 0
 
     browser.on('up', function (s) {
       if (s.name === 'Sub Foo') return
@@ -113,6 +111,47 @@ test('bonjour.find', function (bonjour, t) {
         }, 50)
       }
     })
+  })
+
+  bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Sub Foo', type: 'test', subtypes: [ 'stOne', 'stTwo' ], port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
+})
+
+test('bonjour.find - all services', function (bonjour, t) {
+  var next = afterAll(function () {
+    var browserServices = bonjour.find({})
+    var ups = 0
+    var found = []
+
+    browserServices.on('up', function (s) {
+      // Ensures that bonjour responds to the '_services._dns-sd._udp.local'
+      // request.
+      found.push(s.name)
+
+      if (++ups === 4) {
+        found.sort()
+        t.equal(found[0], 'Baz')
+        t.equal(found[1], 'Foo Bar')
+        t.equal(found[2], 'Invalid')
+        t.equal(found[3], 'Sub Foo')
+        bonjour.destroy()
+        t.end()
+      }
+    })
+  })
+
+  bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Sub Foo', type: 'test', subtypes: [ 'stOne', 'stTwo' ], port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
+})
+
+test('bonjour.find - subtypes', function (bonjour, t) {
+  var next = afterAll(function () {
+    var browserSubtypes = bonjour.find({ type: 'test', subtypes: [ 'stOne', 'stTwo' ] })
+    var subUp = 0
 
     browserSubtypes.on('up', function (s) {
       t.equal(s.name, 'Sub Foo')
@@ -137,6 +176,8 @@ test('bonjour.find', function (bonjour, t) {
           }
         })
         t.equal(testCount, 2)
+        bonjour.destroy()
+        t.end()
       }
     })
   })

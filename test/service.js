@@ -74,6 +74,7 @@ test('txt', function (t) {
 test('_records() - minimal', function (t) {
   var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000 })
   t.deepEqual(s._records(), [
+    { data: '_http._tcp.local', name: '_services._dns-sd._udp.local', ttl: 28800, type: 'PTR' },
     { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' },
     { data: { port: 3000, target: os.hostname() }, name: s.fqdn, ttl: 120, type: 'SRV' },
     { data: new Buffer('00', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' }
@@ -84,6 +85,7 @@ test('_records() - minimal', function (t) {
 test('_records() - everything', function (t) {
   var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000, host: 'example.com', txt: { foo: 'bar' } })
   t.deepEqual(s._records(), [
+    { data: '_http._tcp.local', name: '_services._dns-sd._udp.local', ttl: 28800, type: 'PTR' },
     { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' },
     { data: { port: 3000, target: 'example.com' }, name: s.fqdn, ttl: 120, type: 'SRV' },
     { data: new Buffer('07666f6f3d626172', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' }
