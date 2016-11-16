@@ -136,8 +136,10 @@ test('bonjour.find - all services', function (bonjour, t) {
         t.equal(found[1], 'Foo Bar')
         t.equal(found[2], 'Invalid')
         t.equal(found[3], 'Sub Foo')
-        bonjour.destroy()
-        t.end()
+        setTimeout(function () {
+          bonjour.destroy()
+          t.end()
+        }, 50)
       }
     })
   })
@@ -175,9 +177,10 @@ test('bonjour.find - subtypes', function (bonjour, t) {
             testCount += 1
           }
         })
-        t.equal(testCount, 2)
-        bonjour.destroy()
-        t.end()
+        setTimeout(function () {
+          bonjour.destroy()
+          t.end()
+        }, 50)
       }
     })
   })
