@@ -72,7 +72,7 @@ test('txt', function (t) {
   t.end()
 })
 
-test ('flush', function(t) {
+test('flush', function (t) {
   var s = new Service({ name: 'Foo Bar', type: 'http', port: 3000, host: 'example.com', flush: true })
   t.deepEqual(s.flush, true)
   t.end()
