@@ -49,6 +49,7 @@ test('minimal', function (t) {
   t.equal(s.fqdn, 'Foo Bar._http._tcp.local')
   t.equal(s.txt, null)
   t.equal(s.subtypes, null)
+  t.equal(s.flush, false)
   t.equal(s.published, false)
   t.end()
 })
@@ -71,12 +72,18 @@ test('txt', function (t) {
   t.end()
 })
 
+test('flush', function (t) {
+  var s = new Service({ name: 'Foo Bar', type: 'http', port: 3000, host: 'example.com', flush: true })
+  t.deepEqual(s.flush, true)
+  t.end()
+})
+
 test('_records() - minimal', function (t) {
   var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000 })
   t.deepEqual(s._records(), [
-    { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' },
-    { data: { port: 3000, target: os.hostname() }, name: s.fqdn, ttl: 120, type: 'SRV' },
-    { data: new Buffer('00', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' }
+    { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR', flush: false },
+    { data: { port: 3000, target: os.hostname() }, name: s.fqdn, ttl: 120, type: 'SRV', flush: false },
+    { data: new Buffer('00', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT', flush: false }
   ].concat(getAddressesRecords(s.host)))
   t.end()
 })
@@ -84,9 +91,9 @@ test('_records() - minimal', function (t) {
 test('_records() - everything', function (t) {
   var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000, host: 'example.com', txt: { foo: 'bar' } })
   t.deepEqual(s._records(), [
-    { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' },
-    { data: { port: 3000, target: 'example.com' }, name: s.fqdn, ttl: 120, type: 'SRV' },
-    { data: new Buffer('07666f6f3d626172', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' }
+    { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR', flush: false },
+    { data: { port: 3000, target: 'example.com' }, name: s.fqdn, ttl: 120, type: 'SRV', flush: false },
+    { data: new Buffer('07666f6f3d626172', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT', flush: false }
   ].concat(getAddressesRecords(s.host)))
   t.end()
 })
