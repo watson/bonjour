@@ -35,13 +35,13 @@ var port = function (cb) {
 var test = function (name, fn) {
   tape(name, function (t) {
     port(function (p) {
-      fn(Bonjour({ ip: '127.0.0.1', port: p, multicast: false }), t)
+      fn(Bonjour({ip: '127.0.0.1', port: p, multicast: false}), t)
     })
   })
 }
 
 test('bonjour.publish', function (bonjour, t) {
-  var service = bonjour.publish({ name: 'foo', type: 'bar', port: 3000 })
+  var service = bonjour.publish({name: 'foo', type: 'bar', port: 3000})
   t.ok(service instanceof Service)
   t.equal(service.published, false)
   service.on('up', function () {
@@ -53,7 +53,7 @@ test('bonjour.publish', function (bonjour, t) {
 
 test('bonjour.unpublishAll', function (bonjour, t) {
   t.test('published services', function (t) {
-    var service = bonjour.publish({ name: 'foo', type: 'bar', port: 3000 })
+    var service = bonjour.publish({name: 'foo', type: 'bar', port: 3000})
     service.on('up', function () {
       bonjour.unpublishAll(function (err) {
         t.error(err)
@@ -74,20 +74,31 @@ test('bonjour.unpublishAll', function (bonjour, t) {
 
 test('bonjour.find', function (bonjour, t) {
   var next = afterAll(function () {
-    var browser = bonjour.find({ type: 'test' })
+    var browser = bonjour.find({type: 'test'})
     var ups = 0
 
     browser.on('up', function (s) {
-      if (s.name === 'Foo Bar') {
-        t.equal(s.name, 'Foo Bar')
-        t.equal(s.fqdn, 'Foo Bar._test._tcp.local')
-        t.deepEqual(s.txt, {})
-        t.deepEqual(s.rawTxt, new Buffer('00', 'hex'))
-      } else {
-        t.equal(s.name, 'Baz')
-        t.equal(s.fqdn, 'Baz._test._tcp.local')
-        t.deepEqual(s.txt, { foo: 'bar' })
-        t.deepEqual(s.rawTxt, new Buffer('07666f6f3d626172', 'hex'))
+      switch (s.name) {
+        case 'Foo Bar': {
+          t.equal(s.name, 'Foo Bar')
+          t.equal(s.fqdn, 'Foo Bar._test._tcp.local')
+          t.deepEqual(s.txt, {})
+          t.deepEqual(s.rawTxt, new Buffer('00', 'hex'))
+          break
+        }
+        case 'Baz': {
+          t.equal(s.name, 'Baz')
+          t.equal(s.fqdn, 'Baz._test._tcp.local')
+          t.deepEqual(s.txt, {foo: 'bar'})
+          t.deepEqual(s.rawTxt, new Buffer('07666f6f3d626172', 'hex'))
+          break
+        }
+        case 'Got.Dots.In.Name': {
+          t.equal(s.name, 'Got.Dots.In.Name')
+          t.equals(s.fqdn, 'Got.Dots.In.Name._test._tcp.local')
+          t.deepEqual(s.txt, {})
+          t.deepEqual(s.rawTxt, new Buffer('00', 'hex'))
+        }
       }
       t.equal(s.host, os.hostname())
       t.equal(s.port, 3000)
@@ -111,32 +122,33 @@ test('bonjour.find', function (bonjour, t) {
     })
   })
 
-  bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 }).on('up', next())
-  bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
-  bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
+  bonjour.publish({name: 'Foo Bar', type: 'test', port: 3000}).on('up', next())
+  bonjour.publish({name: 'Invalid', type: 'test2', port: 3000}).on('up', next())
+  bonjour.publish({name: 'Baz', type: 'test', port: 3000, txt: {foo: 'bar'}}).on('up', next())
+  bonjour.publish({name: 'Got.Dots.In.Name', type: 'test', port: 3000}).on('up', next())
 })
 
 test('bonjour.find - binary txt', function (bonjour, t) {
   var next = afterAll(function () {
-    var browser = bonjour.find({ type: 'test', txt: { binary: true } })
+    var browser = bonjour.find({type: 'test', txt: {binary: true}})
 
     browser.on('up', function (s) {
       t.equal(s.name, 'Foo')
-      t.deepEqual(s.txt, { bar: new Buffer('buz') })
+      t.deepEqual(s.txt, {bar: new Buffer('buz')})
       t.deepEqual(s.rawTxt, new Buffer('076261723d62757a', 'hex'))
       bonjour.destroy()
       t.end()
     })
   })
 
-  bonjour.publish({ name: 'Foo', type: 'test', port: 3000, txt: { bar: new Buffer('buz') } }).on('up', next())
+  bonjour.publish({name: 'Foo', type: 'test', port: 3000, txt: {bar: new Buffer('buz')}}).on('up', next())
 })
 
 test('bonjour.find - down event', function (bonjour, t) {
-  var service = bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 })
+  var service = bonjour.publish({name: 'Foo Bar', type: 'test', port: 3000})
 
   service.on('up', function () {
-    var browser = bonjour.find({ type: 'test' })
+    var browser = bonjour.find({type: 'test'})
 
     browser.on('up', function (s) {
       t.equal(s.name, 'Foo Bar')
@@ -153,20 +165,20 @@ test('bonjour.find - down event', function (bonjour, t) {
 
 test('bonjour.findOne - callback', function (bonjour, t) {
   var next = afterAll(function () {
-    bonjour.findOne({ type: 'test' }, function (s) {
+    bonjour.findOne({type: 'test'}, function (s) {
       t.equal(s.name, 'Callback')
       bonjour.destroy()
       t.end()
     })
   })
 
-  bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
-  bonjour.publish({ name: 'Callback', type: 'test', port: 3000 }).on('up', next())
+  bonjour.publish({name: 'Invalid', type: 'test2', port: 3000}).on('up', next())
+  bonjour.publish({name: 'Callback', type: 'test', port: 3000}).on('up', next())
 })
 
 test('bonjour.findOne - emitter', function (bonjour, t) {
   var next = afterAll(function () {
-    var browser = bonjour.findOne({ type: 'test' })
+    var browser = bonjour.findOne({type: 'test'})
     browser.on('up', function (s) {
       t.equal(s.name, 'Emitter')
       bonjour.destroy()
@@ -174,6 +186,6 @@ test('bonjour.findOne - emitter', function (bonjour, t) {
     })
   })
 
-  bonjour.publish({ name: 'Emitter', type: 'test', port: 3000 }).on('up', next())
-  bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
+  bonjour.publish({name: 'Emitter', type: 'test', port: 3000}).on('up', next())
+  bonjour.publish({name: 'Invalid', type: 'test2', port: 3000}).on('up', next())
 })
