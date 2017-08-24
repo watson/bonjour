@@ -4,7 +4,7 @@ var os = require('os')
 var dgram = require('dgram')
 var tape = require('tape')
 var afterAll = require('after-all')
-var Service = require('../lib/service')
+var Service = require('../lib/Service.js');
 var Bonjour = require('../')
 
 var getAddresses = function () {
@@ -114,6 +114,36 @@ test('bonjour.find', function (bonjour, t) {
   bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
+})
+
+test('bonjour.change', function (bonjour, t) {
+  var data = {init: true, found: false, timer: null};
+  var service = bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', function() {
+    var browser = bonjour.find({ type: 'test' })
+    browser.on('up', function (s) {
+      data.browserData = s;
+      
+      if (data.init) {
+        t.equal(s.txt.foo, 'bar');
+        data.timer = setTimeout(function() {
+          t.equal(s.txt.foo, 'baz');
+          bonjour.destroy();
+          t.end();
+        }, 3000); //Wait for the record to update maximum 3000 ms
+        data.init = false; 
+        service.updateTxt({foo: 'baz'});
+      }
+
+      if (!data.init && !data.found && s.txt.foo == 'baz') {
+        data.found = true;
+        clearTimeout(data.timer);
+        t.equal(s.txt.foo, 'baz');
+        bonjour.destroy();
+        t.end();
+      }    
+
+    });
+  })  
 })
 
 test('bonjour.find - binary txt', function (bonjour, t) {
