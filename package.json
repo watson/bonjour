@@ -14,8 +14,8 @@
   "devDependencies": {
     "after-all": "^2.0.2",
     "safe-buffer": "^5.1.1",
-    "tape": "^4.5.1",
-    "standard": "^7.0.1"
+    "standard": "^10.0.3",
+    "tape": "^4.5.1"
   },
   "scripts": {
     "test": "standard && tape test/*.js"
