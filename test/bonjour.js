@@ -6,6 +6,7 @@ var tape = require('tape')
 var afterAll = require('after-all')
 var Service = require('../lib/Service.js')
 var Bonjour = require('../')
+var Buffer = require('safe-buffer').Buffer
 
 var getAddresses = function () {
   var addresses = []

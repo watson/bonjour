@@ -3,6 +3,7 @@
 var os = require('os')
 var test = require('tape')
 var Service = require('../lib/Service.js')
+var Buffer = require('safe-buffer').Buffer
 
 var getAddressesRecords = function (host) {
   var records = []
