@@ -4,8 +4,9 @@ var os = require('os')
 var dgram = require('dgram')
 var tape = require('tape')
 var afterAll = require('after-all')
-var Service = require('../lib/service')
+var Service = require('../lib/Service.js')
 var Bonjour = require('../')
+var Buffer = require('safe-buffer').Buffer
 
 var getAddresses = function () {
   var addresses = []
@@ -82,12 +83,12 @@ test('bonjour.find', function (bonjour, t) {
         t.equal(s.name, 'Foo Bar')
         t.equal(s.fqdn, 'Foo Bar._test._tcp.local')
         t.deepEqual(s.txt, {})
-        t.deepEqual(s.rawTxt, new Buffer('00', 'hex'))
+        t.deepEqual(s.rawTxt, Buffer.from('00', 'hex'))
       } else {
         t.equal(s.name, 'Baz')
         t.equal(s.fqdn, 'Baz._test._tcp.local')
         t.deepEqual(s.txt, { foo: 'bar' })
-        t.deepEqual(s.rawTxt, new Buffer('07666f6f3d626172', 'hex'))
+        t.deepEqual(s.rawTxt, Buffer.from('07666f6f3d626172', 'hex'))
       }
       t.equal(s.host, os.hostname())
       t.equal(s.port, 3000)
@@ -116,20 +117,49 @@ test('bonjour.find', function (bonjour, t) {
   bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
 })
 
+test('bonjour.change', function (bonjour, t) {
+  var data = {init: true, found: false, timer: null}
+  var service = bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', function () {
+    var browser = bonjour.find({ type: 'test' })
+    browser.on('up', function (s) {
+      data.browserData = s
+
+      if (data.init) {
+        t.equal(s.txt.foo, 'bar')
+        data.timer = setTimeout(function () {
+          t.equal(s.txt.foo, 'baz')
+          bonjour.destroy()
+          t.end()
+        }, 3000) // Wait for the record to update maximum 3000 ms
+        data.init = false
+        service.updateTxt({foo: 'baz'})
+      }
+
+      if (!data.init && !data.found && s.txt.foo === 'baz') {
+        data.found = true
+        clearTimeout(data.timer)
+        t.equal(s.txt.foo, 'baz')
+        bonjour.destroy()
+        t.end()
+      }
+    })
+  })
+})
+
 test('bonjour.find - binary txt', function (bonjour, t) {
   var next = afterAll(function () {
     var browser = bonjour.find({ type: 'test', txt: { binary: true } })
 
     browser.on('up', function (s) {
       t.equal(s.name, 'Foo')
-      t.deepEqual(s.txt, { bar: new Buffer('buz') })
-      t.deepEqual(s.rawTxt, new Buffer('076261723d62757a', 'hex'))
+      t.deepEqual(s.txt, { bar: Buffer.from('buz') })
+      t.deepEqual(s.rawTxt, Buffer.from('076261723d62757a', 'hex'))
       bonjour.destroy()
       t.end()
     })
   })
 
-  bonjour.publish({ name: 'Foo', type: 'test', port: 3000, txt: { bar: new Buffer('buz') } }).on('up', next())
+  bonjour.publish({ name: 'Foo', type: 'test', port: 3000, txt: { bar: Buffer.from('buz') } }).on('up', next())
 })
 
 test('bonjour.find - down event', function (bonjour, t) {

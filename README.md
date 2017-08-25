@@ -137,6 +137,10 @@ service have been unpublished.
 
 Publish the service.
 
+#### `service.updateTxt(object)`
+
+Update the txt record of the service.
+
 #### `service.name`
 
 The name of the service, e.g. `Apple TV`.

@@ -2,7 +2,8 @@
 
 var os = require('os')
 var test = require('tape')
-var Service = require('../lib/service')
+var Service = require('../lib/Service.js')
+var Buffer = require('safe-buffer').Buffer
 
 var getAddressesRecords = function (host) {
   var records = []
@@ -76,7 +77,7 @@ test('_records() - minimal', function (t) {
   t.deepEqual(s._records(), [
     { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' },
     { data: { port: 3000, target: os.hostname() }, name: s.fqdn, ttl: 120, type: 'SRV' },
-    { data: new Buffer('00', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' }
+    { data: Buffer.from('00', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' }
   ].concat(getAddressesRecords(s.host)))
   t.end()
 })
@@ -86,7 +87,7 @@ test('_records() - everything', function (t) {
   t.deepEqual(s._records(), [
     { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' },
     { data: { port: 3000, target: 'example.com' }, name: s.fqdn, ttl: 120, type: 'SRV' },
-    { data: new Buffer('07666f6f3d626172', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' }
+    { data: Buffer.from('07666f6f3d626172', 'hex'), name: s.fqdn, ttl: 4500, type: 'TXT' }
   ].concat(getAddressesRecords(s.host)))
   t.end()
 })
