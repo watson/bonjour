@@ -9,14 +9,15 @@
     "dns-equal": "^1.0.0",
     "dns-txt": "^2.0.2",
     "multicast-dns": "^6.0.1",
-    "multicast-dns-service-types": "^1.1.0"
+    "multicast-dns-service-types": "^1.1.0",
+    "standard": "^10.0.3"
   },
   "devDependencies": {
     "after-all": "^2.0.2",
     "tape": "^4.5.1"
   },
   "scripts": {
-    "test": "tape test/*.js"
+    "test": "standard && tape test/*.js"
   },
   "repository": {
     "type": "git",
