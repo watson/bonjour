@@ -116,6 +116,57 @@ test('bonjour.find', function (bonjour, t) {
   bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
 })
 
+test('bonjour.find - wildcard', function (bonjour, t) {
+  var next = afterAll(function () {
+    var browser = bonjour.find({})
+    var ups = 0
+
+    browser.on('up', function (s) {
+      if (s.name === 'Foo') {
+        t.equal(s.name, 'Foo')
+        t.equal(s.fqdn, 'Foo._test1._tcp.local')
+        t.equal(s.type, 'test1')
+        t.deepEqual(s.txt, {})
+        t.deepEqual(s.rawTxt, new Buffer('00', 'hex'))
+      } else if (s.name === 'Bar') {
+        t.equal(s.name, 'Bar')
+        t.equal(s.fqdn, 'Bar._test2._tcp.local')
+        t.equal(s.type, 'test2')
+        t.deepEqual(s.txt, {})
+        t.deepEqual(s.rawTxt, new Buffer('00', 'hex'))
+      } else {
+        t.equal(s.name, 'Baz')
+        t.equal(s.fqdn, 'Baz._test3._tcp.local')
+        t.equal(s.type, 'test3')
+        t.deepEqual(s.txt, { foo: 'bar' })
+        t.deepEqual(s.rawTxt, new Buffer('07666f6f3d626172', 'hex'))
+      }
+      t.equal(s.host, os.hostname())
+      t.equal(s.port, 3000)
+      t.equal(s.protocol, 'tcp')
+      t.equal(s.referer.address, '127.0.0.1')
+      t.equal(s.referer.family, 'IPv4')
+      t.ok(Number.isFinite(s.referer.port))
+      t.ok(Number.isFinite(s.referer.size))
+      t.deepEqual(s.subtypes, [])
+      t.deepEqual(s.addresses.sort(), getAddresses().sort())
+
+      if (++ups === 3) {
+        // use timeout in an attempt to make sure the invalid record doesn't
+        // bubble up
+        setTimeout(function () {
+          bonjour.destroy()
+          t.end()
+        }, 50)
+      }
+    })
+  })
+
+  bonjour.publish({ name: 'Foo', type: 'test1', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Bar', type: 'test2', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Baz', type: 'test3', port: 3000, txt: { foo: 'bar' } }).on('up', next())
+})
+
 test('bonjour.find - binary txt', function (bonjour, t) {
   var next = afterAll(function () {
     var browser = bonjour.find({ type: 'test', txt: { binary: true } })
