@@ -39,7 +39,7 @@ The `options` are optional and will be used when initializing the
 underlying multicast-dns server. For details see [the multicast-dns
 documentation](https://github.com/mafintosh/multicast-dns#mdns--multicastdnsoptions).
 
-The `error` is the callback when some error occur.
+The `error` is the callback when some error occurs.
 
 ### Publishing
 
