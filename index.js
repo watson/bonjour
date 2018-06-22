@@ -6,9 +6,15 @@ var Browser = require('./lib/browser')
 
 module.exports = Bonjour
 
-function Bonjour (opts) {
-  if (!(this instanceof Bonjour)) return new Bonjour(opts)
-  this._server = new Server(opts)
+function Bonjour (opts, error) {
+  if (!(this instanceof Bonjour)) return new Bonjour(opts, error)
+
+  if (typeof opts === 'function') {
+    error = opts;
+    opts = undefined;
+  }
+
+  this._server = new Server(opts, error)
   this._registry = new Registry(this._server)
 }
 

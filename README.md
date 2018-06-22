@@ -32,12 +32,14 @@ bonjour.find({ type: 'http' }, function (service) {
 ### Initializing
 
 ```js
-var bonjour = require('bonjour')([options])
+var bonjour = require('bonjour')([options], [error])
 ```
 
 The `options` are optional and will be used when initializing the
 underlying multicast-dns server. For details see [the multicast-dns
 documentation](https://github.com/mafintosh/multicast-dns#mdns--multicastdnsoptions).
+
+The `error` is the callback when some error occur.
 
 ### Publishing
 
