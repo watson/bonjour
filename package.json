@@ -9,7 +9,8 @@
     "dns-equal": "^1.0.0",
     "dns-txt": "^2.0.2",
     "multicast-dns": "^6.0.1",
-    "multicast-dns-service-types": "^1.1.0"
+    "multicast-dns-service-types": "^1.1.0",
+    "snyk": "^1.316.2"
   },
   "devDependencies": {
     "after-all": "^2.0.2",
@@ -17,7 +18,9 @@
     "tape": "^4.5.1"
   },
   "scripts": {
-    "test": "standard && tape test/*.js"
+    "test": "standard && tape test/*.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -45,5 +48,6 @@
   "coordinates": [
     55.68250900965318,
     12.586377442991648
-  ]
+  ],
+  "snyk": true
 }
