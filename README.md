@@ -55,6 +55,9 @@ Options are:
 - `protocol` (string, optional) - `udp` or `tcp` (default)
 - `txt` (object, optional) - a key/value object to broadcast as the TXT
   record
+- `addresses` (array, optional) - array of IP addresses to advertise.
+  Array elements are IP address specifications as returned by
+  `os.networkInterfaces()`
 
 IANA maintains a [list of official service types and port
 numbers](http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml).
