@@ -18,6 +18,12 @@ var getAddressesRecords = function (host) {
   return records
 }
 
+var getLocalAddresses = function () {
+  return Object.values(os.networkInterfaces())
+    .flat()
+    .filter((addressInfo) => !addressInfo.internal)
+}
+
 test('no name', function (t) {
   t.throws(function () {
     new Service({ type: 'http', port: 3000 }) // eslint-disable-line no-new
@@ -72,7 +78,7 @@ test('txt', function (t) {
 })
 
 test('_records() - minimal', function (t) {
-  var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000 })
+  var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000, addresses: getLocalAddresses() })
   t.deepEqual(s._records(), [
     { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' },
     { data: { port: 3000, target: os.hostname() }, name: s.fqdn, ttl: 120, type: 'SRV' },
@@ -82,7 +88,7 @@ test('_records() - minimal', function (t) {
 })
 
 test('_records() - everything', function (t) {
-  var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000, host: 'example.com', txt: { foo: 'bar' } })
+  var s = new Service({ name: 'Foo Bar', type: 'http', protocol: 'tcp', port: 3000, host: 'example.com', txt: { foo: 'bar' }, addresses: getLocalAddresses() })
   t.deepEqual(s._records(), [
     { data: s.fqdn, name: '_http._tcp.local', ttl: 28800, type: 'PTR' },
     { data: { port: 3000, target: 'example.com' }, name: s.fqdn, ttl: 120, type: 'SRV' },

@@ -7,20 +7,6 @@ var afterAll = require('after-all')
 var Service = require('../lib/service')
 var Bonjour = require('../')
 
-var getAddresses = function () {
-  var addresses = []
-  var itrs = os.networkInterfaces()
-  for (var i in itrs) {
-    var addrs = itrs[i]
-    for (var j in addrs) {
-      if (addrs[j].internal === false) {
-        addresses.push(addrs[j].address)
-      }
-    }
-  }
-  return addresses
-}
-
 var port = function (cb) {
   var s = dgram.createSocket('udp4')
   s.bind(0, function () {
@@ -98,7 +84,7 @@ test('bonjour.find', function (bonjour, t) {
       t.ok(Number.isFinite(s.referer.port))
       t.ok(Number.isFinite(s.referer.size))
       t.deepEqual(s.subtypes, [])
-      t.deepEqual(s.addresses.sort(), getAddresses().sort())
+      t.deepEqual(s.addresses.sort(), ['127.0.0.1'])
 
       if (++ups === 2) {
         // use timeout in an attempt to make sure the invalid record doesn't

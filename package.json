@@ -9,7 +9,8 @@
     "dns-equal": "^1.0.0",
     "dns-txt": "^2.0.2",
     "multicast-dns": "^7.2.3",
-    "multicast-dns-service-types": "^1.1.0"
+    "multicast-dns-service-types": "^1.1.0",
+    "ip-range-check": "^0.2.0"
   },
   "devDependencies": {
     "after-all": "^2.0.2",
