@@ -8,7 +8,7 @@
     "deep-equal": "^1.0.1",
     "dns-equal": "^1.0.0",
     "dns-txt": "^2.0.2",
-    "multicast-dns": "^6.0.1",
+    "multicast-dns": "^7.2.3",
     "multicast-dns-service-types": "^1.1.0"
   },
   "devDependencies": {
