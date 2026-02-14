@@ -55,9 +55,13 @@ Options are:
 - `protocol` (string, optional) - `udp` or `tcp` (default)
 - `txt` (object, optional) - a key/value object to broadcast as the TXT
   record
-- `addresses` (array, optional) - array of IP addresses to advertise.
-  Array elements are IP address specifications as returned by
+- `addresses` (array, optional) - candidate IP addresses for the
+  service. Array elements are IP address specifications as returned by
   `os.networkInterfaces()`
+
+Breaking change (next major): `A`/`AAAA` records are now always emitted
+per response interface to comply with RFC 6762. Addresses that are not
+valid on the interface receiving the query are not advertised.
 
 IANA maintains a [list of official service types and port
 numbers](http://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml).

@@ -84,7 +84,7 @@ test('bonjour.find', function (bonjour, t) {
       t.ok(Number.isFinite(s.referer.port))
       t.ok(Number.isFinite(s.referer.size))
       t.deepEqual(s.subtypes, [])
-      t.deepEqual(s.addresses.sort(), ['127.0.0.1'])
+      t.deepEqual(s.addresses.sort(), [])
 
       if (++ups === 2) {
         // use timeout in an attempt to make sure the invalid record doesn't
