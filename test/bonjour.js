@@ -78,6 +78,8 @@ test('bonjour.find', function (bonjour, t) {
     var ups = 0
 
     browser.on('up', function (s) {
+      if (s.name === 'Sub Foo') return
+
       if (s.name === 'Foo Bar') {
         t.equal(s.name, 'Foo Bar')
         t.equal(s.fqdn, 'Foo Bar._test._tcp.local')
@@ -113,6 +115,79 @@ test('bonjour.find', function (bonjour, t) {
 
   bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Sub Foo', type: 'test', subtypes: [ 'stOne', 'stTwo' ], port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
+})
+
+test('bonjour.find - all services', function (bonjour, t) {
+  var next = afterAll(function () {
+    var browserServices = bonjour.find({})
+    var ups = 0
+    var found = []
+
+    browserServices.on('up', function (s) {
+      // Ensures that bonjour responds to the '_services._dns-sd._udp.local'
+      // request.
+      found.push(s.name)
+
+      if (++ups === 4) {
+        found.sort()
+        t.equal(found[0], 'Baz')
+        t.equal(found[1], 'Foo Bar')
+        t.equal(found[2], 'Invalid')
+        t.equal(found[3], 'Sub Foo')
+        setTimeout(function () {
+          bonjour.destroy()
+          t.end()
+        }, 50)
+      }
+    })
+  })
+
+  bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Sub Foo', type: 'test', subtypes: [ 'stOne', 'stTwo' ], port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
+})
+
+test('bonjour.find - subtypes', function (bonjour, t) {
+  var next = afterAll(function () {
+    var browserSubtypes = bonjour.find({ type: 'test', subtypes: [ 'stOne', 'stTwo' ] })
+    var subUp = 0
+
+    browserSubtypes.on('up', function (s) {
+      t.equal(s.name, 'Sub Foo')
+      t.equal(s.fqdn, 'Sub Foo._test._tcp.local')
+      t.deepEqual(s.txt, {})
+      t.deepEqual(s.rawTxt, new Buffer('00', 'hex'))
+      t.equal(s.host, os.hostname())
+      t.equal(s.port, 3000)
+      t.equal(s.type, 'test')
+      t.equal(s.protocol, 'tcp')
+      t.equal(s.referer.address, '127.0.0.1')
+      t.equal(s.referer.family, 'IPv4')
+      t.ok(Number.isFinite(s.referer.port))
+      t.ok(Number.isFinite(s.referer.size))
+      if (++subUp === 2) {
+        // Subtypes may be out of order depending on order records were
+        // received in.
+        var testCount = 0
+        s.subtypes.forEach(function (subtype) {
+          if ((subtype === 'stTwo') || (subtype === 'stOne')) {
+            testCount += 1
+          }
+        })
+        setTimeout(function () {
+          bonjour.destroy()
+          t.end()
+        }, 50)
+      }
+    })
+  })
+
+  bonjour.publish({ name: 'Foo Bar', type: 'test', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Invalid', type: 'test2', port: 3000 }).on('up', next())
+  bonjour.publish({ name: 'Sub Foo', type: 'test', subtypes: [ 'stOne', 'stTwo' ], port: 3000 }).on('up', next())
   bonjour.publish({ name: 'Baz', type: 'test', port: 3000, txt: { foo: 'bar' } }).on('up', next())
 })
 
