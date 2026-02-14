@@ -4,7 +4,7 @@ A Bonjour/Zeroconf protocol implementation in pure JavaScript. Publish
 services on the local network or discover existing services using
 multicast DNS.
 
-[![Build status](https://travis-ci.org/watson/bonjour.svg?branch=master)](https://travis-ci.org/watson/bonjour)
+[![CI](https://github.com/watson/bonjour/actions/workflows/ci.yml/badge.svg)](https://github.com/watson/bonjour/actions/workflows/ci.yml)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 
 ## Installation
