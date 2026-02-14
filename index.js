@@ -26,7 +26,13 @@ Bonjour.prototype.find = function (opts, onup) {
 
 Bonjour.prototype.findOne = function (opts, cb) {
   var browser = new Browser(this._server.mdns, opts)
+  var tout = opts.timeout && setTimeout(function () {
+    browser.emit('notfound')
+    browser.stop()
+    if (cb) cb(false)
+  }, opts.timeout)
   browser.once('up', function (service) {
+    clearTimeout(tout)
     browser.stop()
     if (cb) cb(service)
   })
